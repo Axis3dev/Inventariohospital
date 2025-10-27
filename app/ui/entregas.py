@@ -6,7 +6,7 @@ import flet as ft
 
 from ..core import reglas, reportes, storage
 from ..core.modelos import Entrega
-from ..theme import card, flat_button, get_icon, primary_button
+from ..theme import card, flat_button, primary_button
 
 
 class EntregasView(ft.Column):
@@ -15,7 +15,7 @@ class EntregasView(ft.Column):
         self.page = page
         self.entregas = [Entrega.from_dict(item) for item in storage.read_json_list("entregas.json")]
         self.controls = [
-            card(primary_button("Nueva entrega", self._abrir_dialogo, icon=get_icon("LOCAL_SHIPPING"))),
+            card(primary_button("Nueva entrega", self._abrir_dialogo, icon=ft.Icons.LOCAL_SHIPPING)),
             self._seccion_pendientes(),
             self._seccion_historico(),
         ]
@@ -37,7 +37,7 @@ class EntregasView(ft.Column):
             trailing=flat_button(
                 "Generar PDF",
                 lambda e, entrega=entrega: self._generar_pdf(entrega),
-                icon=get_icon("PICTURE_AS_PDF"),
+                icon=ft.Icons.PICTURE_AS_PDF,
             ),
         )
 

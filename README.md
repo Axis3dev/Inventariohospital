@@ -2,21 +2,32 @@
 
 Aplicación de escritorio construida con [Flet](https://flet.dev/) para controlar el inventario de tecnología en un hospital. El sistema utiliza archivos JSON y CSV para la persistencia y puede empaquetarse mediante PyInstaller.
 
+## Instalación rápida
+
+1. Ejecuta el instalador de dependencias:
+   ```bash
+   python setup_env.py
+   ```
+2. Inicia la aplicación:
+   ```bash
+   python start.py
+   ```
+
+### O alternativamente:
+
+```bash
+python -m app.main
+```
+
 ## Requisitos
 
 - Python 3.11
 - Pip
 
-Instalación de dependencias:
+Instalación de dependencias manual:
 
 ```bash
 pip install -r requirements.txt
-```
-
-## Ejecución
-
-```bash
-python -m app.main
 ```
 
 La aplicación abre una ventana con la interfaz hospitalaria, navegación lateral y vistas para dashboard, inventario, entregas, mantenimientos, reportes y configuración.

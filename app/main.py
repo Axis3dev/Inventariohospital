@@ -3,18 +3,18 @@ from __future__ import annotations
 
 import flet as ft
 
-from .theme import PRIMARY_COLOR, TEXT_COLOR, get_icon, page_config
+from .theme import PRIMARY_COLOR, TEXT_COLOR, page_config
 from .ui import config as config_view
 from .ui import dashboard, entregas, inventario, mantenimientos, reportes
 
 
 SECCIONES = [
-    ("Dashboard", get_icon("DASHBOARD"), dashboard.build),
-    ("Inventario", get_icon("INVENTORY"), inventario.build),
-    ("Entregas", get_icon("LOCAL_SHIPPING"), entregas.build),
-    ("Mantenimientos", get_icon("BUILD"), mantenimientos.build),
-    ("Reportes", get_icon("INSIGHTS"), reportes.build),
-    ("Configuración", get_icon("SETTINGS"), config_view.build),
+    ("Dashboard", ft.Icons.DASHBOARD, dashboard.build),
+    ("Inventario", ft.Icons.INVENTORY, inventario.build),
+    ("Entregas", ft.Icons.LOCAL_SHIPPING, entregas.build),
+    ("Mantenimientos", ft.Icons.BUILD, mantenimientos.build),
+    ("Reportes", ft.Icons.INSIGHTS, reportes.build),
+    ("Configuración", ft.Icons.SETTINGS, config_view.build),
 ]
 
 
@@ -48,7 +48,7 @@ def main(page: ft.Page) -> None:
 def _header(page: ft.Page) -> ft.Control:
     buscador = ft.TextField(
         hint_text="Buscar en todo el inventario",
-        prefix_icon=get_icon("SEARCH"),
+        prefix_icon=ft.Icons.SEARCH,
         expand=True,
     )
     usuario = ft.Container(

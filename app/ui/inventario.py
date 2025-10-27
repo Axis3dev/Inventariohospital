@@ -8,7 +8,7 @@ import flet as ft
 
 from ..core import importador, reglas, sku, storage
 from ..core.modelos import Asset, Ubicacion
-from ..theme import card, flat_button, get_icon, primary_button
+from ..theme import card, flat_button, primary_button
 
 
 class InventarioView(ft.Column):
@@ -34,8 +34,8 @@ class InventarioView(ft.Column):
                         self.filtro_depto,
                         self.filtro_categoria,
                         self.filtro_estado,
-                        primary_button("+ Alta", self._abrir_alta, icon=get_icon("ADD")),
-                        flat_button("Importar TXT", self._importar_txt, icon=get_icon("UPLOAD_FILE")),
+                        primary_button("+ Alta", self._abrir_alta, icon=ft.Icons.ADD),
+                        flat_button("Importar TXT", self._importar_txt, icon=ft.Icons.UPLOAD_FILE),
                     ],
                     wrap=True,
                 )
