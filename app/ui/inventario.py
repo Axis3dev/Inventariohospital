@@ -69,7 +69,7 @@ class InventarioView(ft.Column):
         self.activos = reglas.cargar_activos()
         self._filtrar()
 
-    def _filtrar(self, _=None) -> None:
+    def _filtrar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         texto = self.filtro_texto.value.lower()
         area = self.filtro_area.value or None
         depto = self.filtro_depto.value or None
@@ -104,13 +104,13 @@ class InventarioView(ft.Column):
         ]
         self.update()
 
-    def _abrir_alta(self, _=None) -> None:
+    def _abrir_alta(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         dialog = AltaDialog(self)
         self.page.dialog = dialog
         dialog.open = True
         self.page.update()
 
-    def _importar_txt(self, _=None) -> None:
+    def _importar_txt(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         self.file_picker.pick_files(allow_multiple=False, allowed_extensions=["txt"])
 
     def _importar_resultado(self, evento: ft.FilePickerResultEvent) -> None:
@@ -166,11 +166,11 @@ class AltaDialog(ft.AlertDialog):
             spacing=8,
         )
 
-    def _cerrar(self, _=None) -> None:
+    def _cerrar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         self.open = False
         self.vista.page.update()
 
-    def _guardar(self, _=None) -> None:
+    def _guardar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         try:
             if not all([self.categoria.value, self.marca.value, self.modelo.value, self.serie.value, self.descripcion.value]):
                 raise ValueError("Todos los campos son obligatorios")

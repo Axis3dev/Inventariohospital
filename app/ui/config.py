@@ -25,7 +25,7 @@ class ConfigView(ft.Column):
         for elemento in datos:
             lista.controls.append(ft.Text(elemento))
         campo = ft.TextField(label="Nuevo elemento")
-        boton = primary_button("Agregar", lambda e, t=tipo, campo=campo: self._agregar_simple(t, campo))
+        boton = primary_button("Agregar", lambda e, t=tipo, campo=campo: self._agregar_simple(e, t, campo))
         return ft.Column([lista, campo, boton], spacing=8)
 
     def _lista_categorias(self) -> ft.Control:
@@ -34,10 +34,10 @@ class ConfigView(ft.Column):
             lista.controls.append(ft.Text(f"{cat['categoria']} ({cat['prefijo']})"))
         nombre = ft.TextField(label="Categoría")
         prefijo = ft.TextField(label="Prefijo")
-        boton = primary_button("Agregar", lambda e: self._agregar_categoria(nombre, prefijo))
+        boton = primary_button("Agregar", lambda e: self._agregar_categoria(e, nombre, prefijo))
         return ft.Column([lista, nombre, prefijo, boton], spacing=8)
 
-    def _agregar_simple(self, tipo: str, campo: ft.TextField) -> None:
+    def _agregar_simple(self, e: ft.ControlEvent | None, tipo: str, campo: ft.TextField) -> None:  # noqa: ARG002
         valor = campo.value.strip()
         if not valor:
             self._mensaje("Debe capturar un valor")
@@ -52,7 +52,12 @@ class ConfigView(ft.Column):
         self._mensaje("Guardado")
         self.page.update()
 
-    def _agregar_categoria(self, nombre: ft.TextField, prefijo: ft.TextField) -> None:
+    def _agregar_categoria(
+        self,
+        e: ft.ControlEvent | None,
+        nombre: ft.TextField,
+        prefijo: ft.TextField,
+    ) -> None:  # noqa: ARG002
         if not nombre.value or not prefijo.value:
             self._mensaje("Debe capturar categoría y prefijo")
             return

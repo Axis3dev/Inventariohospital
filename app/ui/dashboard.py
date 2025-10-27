@@ -9,7 +9,7 @@ from ..core import reglas
 from ..theme import card
 
 
-def build() -> ft.Control:
+def build(page: ft.Page) -> ft.Control:  # noqa: ARG001
     resumen = reglas.resumen_dashboard()
     cards = ft.Row(
         [

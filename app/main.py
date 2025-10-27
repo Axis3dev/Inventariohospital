@@ -13,7 +13,7 @@ SECCIONES = [
     ("Inventario", ft.Icons.INVENTORY, inventario.build),
     ("Entregas", ft.Icons.LOCAL_SHIPPING, entregas.build),
     ("Mantenimientos", ft.Icons.BUILD, mantenimientos.build),
-    ("Reportes", ft.Icons.INSIGHTS, reportes.build),
+    ("Reportes", ft.Icons.ANALYTICS, reportes.build),
     ("Configuración", ft.Icons.SETTINGS, config_view.build),
 ]
 

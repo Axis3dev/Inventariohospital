@@ -41,7 +41,7 @@ class EntregasView(ft.Column):
             ),
         )
 
-    def _abrir_dialogo(self, _=None) -> None:
+    def _abrir_dialogo(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         dialog = NuevaEntregaDialog(self)
         self.page.dialog = dialog
         dialog.open = True
@@ -83,11 +83,11 @@ class NuevaEntregaDialog(ft.AlertDialog):
             spacing=8,
         )
 
-    def _cerrar(self, _=None) -> None:
+    def _cerrar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         self.open = False
         self.vista.page.update()
 
-    def _guardar(self, _=None) -> None:
+    def _guardar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         try:
             equipos = [sku.strip() for sku in self.equipos.value.split(",") if sku.strip()]
             if not equipos:

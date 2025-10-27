@@ -66,7 +66,7 @@ class MantenimientosView(ft.Column):
         self.page.snack_bar.open = True
         self.page.update()
 
-    def _nuevo_correctivo(self, _=None) -> None:
+    def _nuevo_correctivo(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         dialog = CorrectivoDialog(self)
         self.page.dialog = dialog
         dialog.open = True
@@ -104,11 +104,11 @@ class CorrectivoDialog(ft.AlertDialog):
             spacing=8,
         )
 
-    def _cerrar(self, _=None) -> None:
+    def _cerrar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         self.open = False
         self.vista.page.update()
 
-    def _guardar(self, _=None) -> None:
+    def _guardar(self, e: ft.ControlEvent | None = None) -> None:  # noqa: ARG002
         try:
             if not self.sku.value:
                 raise ValueError("Debe indicar un SKU")
