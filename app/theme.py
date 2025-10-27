@@ -1,52 +1,55 @@
-"""Definición de tema y componentes comunes para la aplicación."""
+"""Configuración de tema y componentes comunes para la app."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Callable
 
 import flet as ft
 
-
-PRIMARY_COLOR = ft.colors.BLUE_700
+PRIMARY_COLOR = ft.Colors.BLUE_700
 ACCENT_COLOR = "#00BFA6"
-BACKGROUND_COLOR = ft.colors.WHITE
-TEXT_COLOR = ft.colors.BLACK87
-CARD_COLOR = ft.colors.WHITE
+TEXT_COLOR = ft.Colors.BLACK87
+BACKGROUND_COLOR = ft.Colors.WHITE
 
 
-@dataclass
-class ThemedButton:
-    """Fábrica de botones con estilos coherentes."""
+def page_config(page: ft.Page) -> None:
+    """Configura valores globales para la ventana principal."""
 
-    label: str
-    on_click: Callable[[ft.ControlEvent], None]
-    icon: str | None = None
-    filled: bool = True
+    page.title = "Inventario TI Hospitalario"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.bgcolor = BACKGROUND_COLOR
 
-    def build(self) -> ft.Control:
-        style = ft.ButtonStyle(
-            bgcolor=PRIMARY_COLOR if self.filled else "transparent",
-            color="white" if self.filled else PRIMARY_COLOR,
-            overlay_color=ACCENT_COLOR,
-            padding=ft.padding.symmetric(horizontal=16, vertical=12),
-            shape=ft.RoundedRectangleBorder(radius=12),
-        )
-        return ft.ElevatedButton(
-            text=self.label,
-            icon=self.icon,
-            on_click=self.on_click,
-            style=style,
-        )
+    page.window_full_screen = True
+    page.window_maximized = True
+
+    page.padding = 0
+    page.spacing = 0
+    page.scroll = ft.ScrollMode.AUTO
+    page.update()
 
 
-def primary_button(label: str, on_click: Callable[[ft.ControlEvent], None], icon: str | None = None) -> ft.Control:
-    """Crea un botón elevado con el estilo primario."""
+def primary_button(
+    label: str,
+    on_click: Callable[[ft.ControlEvent], None],
+    icon: str | None = None,
+) -> ft.Control:
+    """Botón primario con la paleta institucional."""
 
-    return ThemedButton(label=label, icon=icon, on_click=on_click, filled=True).build()
+    style = ft.ButtonStyle(
+        bgcolor=PRIMARY_COLOR,
+        color=ft.Colors.WHITE,
+        overlay_color=ACCENT_COLOR,
+        padding=ft.padding.symmetric(horizontal=16, vertical=12),
+        shape=ft.RoundedRectangleBorder(radius=12),
+    )
+    return ft.ElevatedButton(text=label, icon=icon, on_click=on_click, style=style)
 
 
-def flat_button(label: str, on_click: Callable[[ft.ControlEvent], None], icon: str | None = None) -> ft.Control:
-    """Crea un botón plano con borde y color primario."""
+def flat_button(
+    label: str,
+    on_click: Callable[[ft.ControlEvent], None],
+    icon: str | None = None,
+) -> ft.Control:
+    """Botón plano con énfasis en el color primario."""
 
     style = ft.ButtonStyle(
         bgcolor="transparent",
@@ -63,27 +66,9 @@ def card(*content: ft.Control, expand: bool = False) -> ft.Control:
 
     return ft.Container(
         content=ft.Column(list(content), tight=True, spacing=8),
-        bgcolor=CARD_COLOR,
+        bgcolor=ft.Colors.WHITE,
         border_radius=16,
         shadow=ft.BoxShadow(blur_radius=8, spread_radius=1, color="#1F293710"),
         padding=16,
         expand=expand,
     )
-
-
-def page_config(page: ft.Page) -> None:
-    """Configura valores globales para la página Flet."""
-
-    page.title = "Inventario TI Hospitalario"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.bgcolor = BACKGROUND_COLOR
-    page.window_full_screen = True
-    page.window_maximized = True
-    page.window_width = None
-    page.window_height = None
-    page.padding = 0
-    page.scroll = ft.ScrollMode.AUTO
-    page.fonts = {}
-    page.update()
-
-
