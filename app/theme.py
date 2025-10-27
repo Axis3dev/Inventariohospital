@@ -7,11 +7,11 @@ from typing import Callable
 import flet as ft
 
 
-PRIMARY_COLOR = "#1A73E8"
+PRIMARY_COLOR = ft.colors.BLUE_700
 ACCENT_COLOR = "#00BFA6"
-BACKGROUND_COLOR = "#F5F6F8"
-TEXT_COLOR = "#1F2937"
-CARD_COLOR = "white"
+BACKGROUND_COLOR = ft.colors.WHITE
+TEXT_COLOR = ft.colors.BLACK87
+CARD_COLOR = ft.colors.WHITE
 
 
 @dataclass
@@ -77,8 +77,13 @@ def page_config(page: ft.Page) -> None:
     page.title = "Inventario TI Hospitalario"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.bgcolor = BACKGROUND_COLOR
-    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
+    page.window_full_screen = True
+    page.window_maximized = True
+    page.window_width = None
+    page.window_height = None
+    page.padding = 0
     page.scroll = ft.ScrollMode.AUTO
     page.fonts = {}
+    page.update()
 
 

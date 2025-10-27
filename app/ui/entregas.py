@@ -12,6 +12,7 @@ from ..theme import card, flat_button, primary_button
 class EntregasView(ft.Column):
     def __init__(self, page: ft.Page):
         super().__init__(spacing=16, scroll=ft.ScrollMode.AUTO)
+        self.expand = True
         self.page = page
         self.entregas = [Entrega.from_dict(item) for item in storage.read_json_list("entregas.json")]
         self.controls = [
@@ -119,4 +120,4 @@ class NuevaEntregaDialog(ft.AlertDialog):
 
 
 def build(page: ft.Page) -> ft.Control:
-    return EntregasView(page)
+    return ft.Container(expand=True, padding=20, content=EntregasView(page))

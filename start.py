@@ -12,4 +12,4 @@ except Exception as e:  # noqa: BLE001
     ) from e
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    ft.app(target=main, view=ft.AppView.FLET_APP)

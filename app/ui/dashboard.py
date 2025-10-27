@@ -39,4 +39,12 @@ def build(page: ft.Page) -> ft.Control:  # noqa: ARG001
         ft.Text("Resumen por área", weight=ft.FontWeight.BOLD),
         ft.Text(json.dumps(grafica_data, ensure_ascii=False, indent=2), selectable=True),
     )
-    return ft.Column([cards, ft.Row([estados, ultima], wrap=True, spacing=16), grafica], scroll=ft.ScrollMode.AUTO, spacing=16)
+    return ft.Container(
+        expand=True,
+        padding=20,
+        content=ft.Column(
+            [cards, ft.Row([estados, ultima], wrap=True, spacing=16), grafica],
+            scroll=ft.ScrollMode.AUTO,
+            spacing=16,
+        ),
+    )

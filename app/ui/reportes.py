@@ -15,7 +15,11 @@ def build(page: ft.Page) -> ft.Control:
         ],
         spacing=12,
     )
-    return card(ft.Text("Reportes disponibles", weight=ft.FontWeight.BOLD), botones)
+    return ft.Container(
+        expand=True,
+        padding=20,
+        content=card(ft.Text("Reportes disponibles", weight=ft.FontWeight.BOLD), botones),
+    )
 
 
 def _exportar(page: ft.Page, formato: str) -> None:

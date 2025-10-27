@@ -20,6 +20,10 @@ SECCIONES = [
 
 def main(page: ft.Page) -> None:
     page_config(page)
+    page.vertical_alignment = ft.MainAxisAlignment.STRETCH
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
+    page.spacing = 0
+    page.padding = 0
     header = _header(page)
     contenido = ft.Container(expand=True)
 
@@ -39,10 +43,20 @@ def main(page: ft.Page) -> None:
         on_change=lambda e: navegar(e.control.selected_index),
         min_width=80,
         group_alignment=-0.9,
+        expand=True,
     )
 
     navegar(0)
-    page.add(ft.Column([header, ft.Row([rail, contenido], expand=True)], expand=True))
+    page.add(
+        ft.Column(
+            [
+                header,
+                ft.Row([rail, contenido], expand=True, spacing=0),
+            ],
+            expand=True,
+            spacing=0,
+        )
+    )
 
 
 def _header(page: ft.Page) -> ft.Control:

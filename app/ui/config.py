@@ -10,6 +10,7 @@ from ..theme import card, primary_button
 class ConfigView(ft.Column):
     def __init__(self, page: ft.Page):
         super().__init__(spacing=16, scroll=ft.ScrollMode.AUTO)
+        self.expand = True
         self.page = page
         self.areas = storage.read_json_list("areas.json")
         self.categorias = storage.read_json_list("categorias.json")
@@ -78,4 +79,4 @@ class ConfigView(ft.Column):
 
 
 def build(page: ft.Page) -> ft.Control:
-    return ConfigView(page)
+    return ft.Container(expand=True, padding=20, content=ConfigView(page))

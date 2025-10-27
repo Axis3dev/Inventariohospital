@@ -13,6 +13,7 @@ from ..theme import card, flat_button, primary_button
 class MantenimientosView(ft.Column):
     def __init__(self, page: ft.Page):
         super().__init__(spacing=16, scroll=ft.ScrollMode.AUTO)
+        self.expand = True
         self.page = page
         self.tab = ft.Tabs(
             tabs=[
@@ -141,4 +142,4 @@ class CorrectivoDialog(ft.AlertDialog):
 
 
 def build(page: ft.Page) -> ft.Control:
-    return MantenimientosView(page)
+    return ft.Container(expand=True, padding=20, content=MantenimientosView(page))
