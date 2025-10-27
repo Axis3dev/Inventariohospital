@@ -7,7 +7,7 @@ import flet as ft
 
 from ..core import reglas, reportes, storage
 from ..core.modelos import Mantenimiento
-from ..theme import card, flat_button, primary_button
+from ..theme import card, flat_button, get_icon, primary_button
 
 
 class MantenimientosView(ft.Column):
@@ -43,7 +43,7 @@ class MantenimientosView(ft.Column):
         return card(*filas)
 
     def _correctivos(self) -> ft.Control:
-        boton = primary_button("Nuevo correctivo", self._nuevo_correctivo, icon=ft.icons.BUILD)
+        boton = primary_button("Nuevo correctivo", self._nuevo_correctivo, icon=get_icon("BUILD"))
         return card(boton)
 
     def _historial(self) -> ft.Control:

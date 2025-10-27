@@ -3,18 +3,18 @@ from __future__ import annotations
 
 import flet as ft
 
-from .theme import PRIMARY_COLOR, TEXT_COLOR, page_config
+from .theme import PRIMARY_COLOR, TEXT_COLOR, get_icon, page_config
 from .ui import config as config_view
 from .ui import dashboard, entregas, inventario, mantenimientos, reportes
 
 
 SECCIONES = [
-    ("Dashboard", ft.icons.DASHBOARD, dashboard.build),
-    ("Inventario", ft.icons.INVENTORY, inventario.build),
-    ("Entregas", ft.icons.LOCAL_SHIPPING, entregas.build),
-    ("Mantenimientos", ft.icons.BUILD, mantenimientos.build),
-    ("Reportes", ft.icons.INSIGHTS, reportes.build),
-    ("Configuración", ft.icons.SETTINGS, config_view.build),
+    ("Dashboard", get_icon("DASHBOARD"), dashboard.build),
+    ("Inventario", get_icon("INVENTORY"), inventario.build),
+    ("Entregas", get_icon("LOCAL_SHIPPING"), entregas.build),
+    ("Mantenimientos", get_icon("BUILD"), mantenimientos.build),
+    ("Reportes", get_icon("INSIGHTS"), reportes.build),
+    ("Configuración", get_icon("SETTINGS"), config_view.build),
 ]
 
 
@@ -29,7 +29,10 @@ def main(page: ft.Page) -> None:
         page.update()
 
     rail = ft.NavigationRail(
-        destinations=[ft.NavigationRailDestination(icon=icono, label=texto) for texto, icono, _ in [(s[0], s[1], s[2]) for s in SECCIONES]],
+        destinations=[
+            ft.NavigationRailDestination(icon=icono, label=texto)
+            for texto, icono, _ in SECCIONES
+        ],
         selected_index=0,
         label_type=ft.NavigationRailLabelType.ALL,
         bgcolor="white",
@@ -43,7 +46,11 @@ def main(page: ft.Page) -> None:
 
 
 def _header(page: ft.Page) -> ft.Control:
-    buscador = ft.TextField(hint_text="Buscar en todo el inventario", prefix_icon=ft.icons.SEARCH, expand=True)
+    buscador = ft.TextField(
+        hint_text="Buscar en todo el inventario",
+        prefix_icon=get_icon("SEARCH"),
+        expand=True,
+    )
     usuario = ft.Container(
         ft.Column(
             [ft.Text("Usuario", size=14, color=TEXT_COLOR), ft.Text("capturista@hospital", size=12, color="#6B7280")],

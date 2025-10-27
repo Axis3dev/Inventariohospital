@@ -80,3 +80,15 @@ def page_config(page: ft.Page) -> None:
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
     page.scroll = ft.ScrollMode.AUTO
     page.fonts = {}
+
+
+def get_icon(nombre: str) -> str:
+    """Obtiene el código de un ícono soportando cambios de nombre en Flet."""
+
+    icons_mod = getattr(ft, "icons", None)
+    if icons_mod and hasattr(icons_mod, nombre):
+        return getattr(icons_mod, nombre)
+    icons_cls = getattr(ft, "Icons", None)
+    if icons_cls and hasattr(icons_cls, nombre):
+        return getattr(icons_cls, nombre)
+    raise AttributeError(f"Ícono '{nombre}' no disponible en esta versión de Flet")
