@@ -1,0 +1,7 @@
+[
+  {"categoria": "CPU", "prefijo": "CPU"},
+  {"categoria": "MONITOR", "prefijo": "MON"},
+  {"categoria": "TELEFONO", "prefijo": "TEL"},
+  {"categoria": "CAMARA", "prefijo": "CAM"},
+  {"categoria": "NBK", "prefijo": "NBK"}
+]
