@@ -1,93 +1,105 @@
-"""Contenedor principal de la interfaz."""
-from __future__ import annotations
-
-from typing import Callable, Iterable, Sequence, Tuple
+from collections.abc import Callable
 
 import flet as ft
 
-from ..theme import PRIMARY_COLOR, TEXT_COLOR
-
-
-Destino = Tuple[str, str, Callable[[ft.Page], ft.Control]]
+NAV_WIDTH = 96
 
 
 def make_shell(
     page: ft.Page,
-    section_title: str,
-    destinations: Iterable[Destino],
-    selected_index: int,
+    title: str,
+    destinations: list[tuple[str, str, Callable[[ft.Page], ft.Control]]],
+    on_select_index: int,
     content: ft.Control,
 ) -> ft.Control:
-    """Construye la estructura de navegación y contenido."""
-
-    title_text = ft.Text(section_title, size=20, weight=ft.FontWeight.W_600, color=PRIMARY_COLOR)
-    subtitle = ft.Text("Inventario TI Hospitalario", size=12, color=ft.Colors.GREY_600)
-    heading = ft.Column([subtitle, title_text], spacing=4, tight=True)
-
-    search = ft.TextField(
-        hint_text="Buscar en el inventario",
-        prefix_icon=ft.Icons.SEARCH,
-        expand=True,
-    )
-
-    user_badge = ft.Container(
-        padding=8,
-        border_radius=12,
-        bgcolor=ft.Colors.GREY_100,
-        content=ft.Column(
-            [ft.Text("Usuario", size=14, color=TEXT_COLOR), ft.Text("capturista@hospital", size=12, color=ft.Colors.GREY_600)],
-            tight=True,
-            spacing=2,
-        ),
-    )
-
-    header = ft.Container(
-        padding=20,
-        bgcolor=ft.Colors.WHITE,
-        content=ft.Row(
-            [heading, search, user_badge],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        ),
-    )
-
-    content_container = ft.Container(expand=True, padding=20, content=content)
-    destinos: Sequence[Destino] = tuple(destinations)
-
-    def on_nav_change(event: ft.ControlEvent) -> None:
-        index = event.control.selected_index
-        new_title, _, builder = destinos[index]
-        title_text.value = new_title
-        content_container.content = builder(page)
-        page.update()
-
-    def _destination(label: str, icon_name: str) -> ft.NavigationRailDestination:
-        return ft.NavigationRailDestination(
-            icon=ft.Icon(name=icon_name),
-            selected_icon=ft.Icon(name=icon_name),
-            label=label,
-        )
-
-    nav = ft.NavigationRail(
-        selected_index=selected_index,
+    rail = ft.NavigationRail(
+        selected_index=on_select_index,
         label_type=ft.NavigationRailLabelType.ALL,
-        destinations=[_destination(label, icon) for label, icon, _ in destinos],
-        on_change=on_nav_change,
-        bgcolor=ft.Colors.WHITE,
-        min_width=80,
-        group_alignment=-0.9,
-        expand=True,
+        min_width=NAV_WIDTH,
+        group_alignment=-1.0,
+        destinations=[
+            ft.NavigationRailDestination(
+                icon=getattr(ft.Icons, icon_name),
+                selected_icon=getattr(ft.Icons, icon_name),
+                label=label,
+            )
+            for (label, icon_name, _builder) in destinations
+        ],
     )
 
     rail_container = ft.Container(
-        width=96,
+        width=NAV_WIDTH,
         bgcolor=ft.Colors.GREY_50,
-        padding=12,
-        border_radius=0,
-        content=nav,
-        expand=True,
+        padding=6,
+        border_radius=12,
+        content=ft.Column(
+            expand=True,
+            controls=[ft.Container(expand=True, content=rail)],
+        ),
     )
 
-    body = ft.Row([rail_container, content_container], spacing=0, expand=True)
+    content_container = ft.Container(
+        expand=True,
+        padding=12,
+        content=content,
+    )
 
-    return ft.Column([header, body], expand=True, spacing=0)
+    layout = ft.Row(
+        expand=True,
+        spacing=16,
+        controls=[rail_container, content_container],
+    )
+
+    rail.on_change = lambda e: _route_to(page, destinations, e.control.selected_index)
+
+    shell = ft.Column(
+        expand=True,
+        spacing=8,
+        controls=[_topbar(title), layout],
+    )
+
+    page.on_resize = lambda e: page.update()
+    return shell
+
+
+def _route_to(page: ft.Page, destinations, index: int) -> None:
+    label, _icon, builder = destinations[index]
+    new_content = builder(page)
+    page.controls.clear()
+    page.add(make_shell(page, label, destinations, index, new_content))
+    page.update()
+
+
+def _topbar(title: str) -> ft.Control:
+    return ft.Container(
+        padding=12,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Text(title, size=22, weight=ft.FontWeight.W_700, color=ft.Colors.BLUE_700),
+                ft.Container(
+                    width=680,
+                    content=ft.TextField(
+                        prefix_icon=ft.Icons.SEARCH,
+                        hint_text="Buscar en el inventario",
+                        border_radius=12,
+                        dense=True,
+                        autofocus=False,
+                    ),
+                ),
+                ft.Container(
+                    padding=8,
+                    border_radius=12,
+                    bgcolor=ft.Colors.GREY_100,
+                    content=ft.Column(
+                        spacing=2,
+                        controls=[
+                            ft.Text("Usuario", size=12, color=ft.Colors.GREY),
+                            ft.Text("capturista@hospital", size=13),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+    )

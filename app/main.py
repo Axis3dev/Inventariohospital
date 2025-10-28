@@ -12,22 +12,21 @@ def main(page: ft.Page) -> None:
     """Configura la página y monta la shell principal."""
 
     page_config(page)
-    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
-    page.vertical_alignment = ft.MainAxisAlignment.START
 
     destinations = [
-        ("Dashboard", ft.Icons.DASHBOARD, dashboard.build),
-        ("Inventario", ft.Icons.INVENTORY, inventario.build),
-        ("Entregas", ft.Icons.LOCAL_SHIPPING, entregas.build),
-        ("Mantenimientos", ft.Icons.BUILD, mantenimientos.build),
-        ("Reportes", ft.Icons.ANALYTICS, reportes.build),
-        ("Configuración", ft.Icons.SETTINGS, config.build),
+        ("Dashboard", "DASHBOARD", dashboard.build),
+        ("Inventario", "INVENTORY", inventario.build),
+        ("Entregas", "LOCAL_SHIPPING", entregas.build),
+        ("Mantenimientos", "BUILD", mantenimientos.build),
+        ("Reportes", "ANALYTICS", reportes.build),
+        ("Configuración", "SETTINGS", config.build),
     ]
 
-    initial_index = 0
-    content = destinations[initial_index][2](page)
-    shell = make_shell(page, destinations[initial_index][0], destinations, initial_index, content)
-    page.add(shell)
+    idx = 0
+    content = destinations[idx][2](page)
+    page.controls.clear()
+    page.add(make_shell(page, destinations[idx][0], destinations, idx, content))
+    page.update()
 
 
 if __name__ == "__main__":
