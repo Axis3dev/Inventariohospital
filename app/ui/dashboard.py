@@ -1,50 +1,55 @@
-"""Vista de dashboard principal."""
+"""Dashboard con indicadores rápidos."""
 from __future__ import annotations
-
-import json
 
 import flet as ft
 
-from ..core import reglas
-from ..theme import card
+from ..core import storage
+
+
+def _kpi(titulo: str, valor: str) -> ft.Control:
+    return ft.Container(
+        bgcolor=ft.Colors.WHITE,
+        border_radius=12,
+        padding=16,
+        content=ft.Column(
+            controls=[
+                ft.Text(titulo, weight=ft.FontWeight.W_600),
+                ft.Text(valor, size=26, weight=ft.FontWeight.W_700),
+            ],
+            spacing=6,
+        ),
+    )
 
 
 def build(page: ft.Page) -> ft.Control:  # noqa: ARG001
-    resumen = reglas.resumen_dashboard()
-    cards = ft.Row(
-        [
-            card(ft.Text("Equipos totales", weight=ft.FontWeight.BOLD), ft.Text(str(resumen["total_activos"]), size=32)),
-            card(
-                ft.Text("Entregas pendientes", weight=ft.FontWeight.BOLD),
-                ft.Text(str(resumen["pendientes_entrega"]), size=32),
-            ),
-            card(
-                ft.Text("Mantenimientos próximos", weight=ft.FontWeight.BOLD),
-                ft.Text(f"Hoy: {resumen['mantenimientos_hoy']}  / 7d: {resumen['mantenimientos_7']}  / 30d: {resumen['mantenimientos_30']}", size=16),
-            ),
-        ],
-        wrap=True,
-        spacing=16,
-    )
-    estados = ft.Column([
-        ft.Text("Equipos por estado", weight=ft.FontWeight.BOLD, size=20),
-        ft.DataTable(
-            columns=[ft.DataColumn(ft.Text("Estado")), ft.DataColumn(ft.Text("Cantidad"))],
-            rows=[ft.DataRow(cells=[ft.DataCell(ft.Text(nombre)), ft.DataCell(ft.Text(str(valor)))]) for nombre, valor in resumen["por_estado"].items()],
-        ),
-    ])
-    ultima = card(ft.Text("Última sesión de inventario", weight=ft.FontWeight.BOLD), ft.Text(resumen["ultima_sesion"][:500]))
-    grafica_data = reglas.grafica_categorias_por_area()
-    grafica = card(
-        ft.Text("Resumen por área", weight=ft.FontWeight.BOLD),
-        ft.Text(json.dumps(grafica_data, ensure_ascii=False, indent=2), selectable=True),
-    )
+    """Construye la vista principal del dashboard."""
+
+    assets = storage.read_json(storage.DATA_DIR / "assets.json") or []
+    total = len(assets)
+
     return ft.Container(
         expand=True,
-        padding=20,
+        padding=16,
         content=ft.Column(
-            [cards, ft.Row([estados, ultima], wrap=True, spacing=16), grafica],
-            scroll=ft.ScrollMode.AUTO,
             spacing=16,
+            expand=True,
+            controls=[
+                ft.Row(
+                    spacing=12,
+                    controls=[
+                        _kpi("Equipos totales", str(total)),
+                        _kpi("Entregas pendientes", "0"),
+                        _kpi("Mantenimientos próximos", "Hoy: 0 / 7d: 0 / 30d: 0"),
+                    ],
+                    wrap=True,
+                ),
+                ft.Text("Equipos por estado", size=18, weight=ft.FontWeight.W_700),
+                ft.Container(
+                    bgcolor=ft.Colors.WHITE,
+                    border_radius=12,
+                    padding=16,
+                    content=ft.Text("Próximamente: gráfico/tabla"),
+                ),
+            ],
         ),
     )

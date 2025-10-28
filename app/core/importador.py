@@ -84,3 +84,16 @@ def _guardar_diferencias_csv(path: Path, diferencias: Iterable[dict[str, str]]) 
         fh.write(",".join(cabeceras) + "\n")
         for row in diferencias:
             fh.write(",".join(row.get(col, "") for col in cabeceras) + "\n")
+
+
+def importar_sesion(path_txt: str, area: str, depto: str, usuario: str = "sistemas") -> tuple[bool, str]:
+    """Ejecuta una importación rápida y devuelve un resumen legible."""
+
+    try:
+        resumen = importar_txt(Path(path_txt), area, depto, usuario)
+        total = resumen.get("total_leidos", 0)
+        movidos = len(resumen.get("movimientos", []))
+        nuevos = len(resumen.get("nuevos", []))
+        return True, f"Leídos: {total} | Movidos: {movidos} | Nuevos: {nuevos}"
+    except Exception as exc:  # noqa: BLE001
+        return False, str(exc)
