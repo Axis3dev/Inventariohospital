@@ -7,6 +7,17 @@ import flet as ft
 
 SIDEBAR_W = 220
 
+ICON_MAP: dict[str, ft.icons.IconData] = {
+    "Dashboard": ft.Icons.DASHBOARD,
+    "Inventario": ft.Icons.INVENTORY,
+    "Nuevo equipo": ft.Icons.ADD_BOX,
+    "Importar TXT": ft.Icons.UPLOAD_FILE,
+    "Entregas": ft.Icons.LOCAL_SHIPPING,
+    "Mantenimientos": ft.Icons.BUILD,
+    "Reportes": ft.Icons.ANALYTICS,
+    "Configuraciones": ft.Icons.SETTINGS,
+}
+
 
 def make_shell(
     page: ft.Page,
@@ -18,15 +29,6 @@ def make_shell(
     """Construye la interfaz principal con sidebar y topbar."""
 
     labels = [route[0] for route in routes]
-    icons = [
-        ft.Icons.DASHBOARD,
-        ft.Icons.INVENTORY,
-        ft.Icons.ADD_BOX,
-        ft.Icons.UPLOAD_FILE,
-        ft.Icons.LOCAL_SHIPPING,
-        ft.Icons.BUILD,
-        ft.Icons.ANALYTICS,
-    ]
 
     def _go(index: int) -> None:
         _, builder = routes[index]
@@ -37,7 +39,7 @@ def make_shell(
 
     items: list[ft.Control] = []
     for idx, label in enumerate(labels):
-        icon = icons[idx] if idx < len(icons) else ft.Icons.CIRCLE
+        icon = ICON_MAP.get(label, ft.Icons.CIRCLE)
         button = ft.TextButton(
             content=ft.Row(
                 controls=[ft.Icon(icon, color=ft.Colors.BLUE_700), ft.Text(label, size=14)],
@@ -70,11 +72,15 @@ def make_shell(
             expand=True,
             spacing=6,
             controls=[
-                ft.Text("Inventario TI", size=18, weight=ft.FontWeight.W_700, color=ft.Colors.BLUE_700),
-                ft.Divider(),
-                *items,
-                ft.Container(expand=True),
-                ft.Text("v1.0", size=12, color=ft.Colors.GREY),
+                ft.Container(
+                    expand=True,
+                    content=ft.Column(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=6,
+                        controls=items,
+                    ),
+                ),
+                ft.Text("v1.0", size=12, color=ft.Colors.GREY, text_align=ft.TextAlign.CENTER),
             ],
         ),
     )
@@ -86,13 +92,6 @@ def make_shell(
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Text(title, size=22, weight=ft.FontWeight.W_700, color=ft.Colors.BLUE_700),
-                ft.TextField(
-                    prefix_icon=ft.Icons.SEARCH,
-                    hint_text="Buscar en el inventario",
-                    width=640,
-                    border_radius=12,
-                    dense=True,
-                ),
                 ft.Row(
                     spacing=8,
                     controls=[

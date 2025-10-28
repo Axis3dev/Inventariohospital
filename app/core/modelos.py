@@ -17,6 +17,15 @@ ESTADOS_DEFECTO = [
     "EXTRAVIADO",
 ]
 
+ESTATUS_DEFECTO = [
+    "PENDIENTE_ENTREGA",
+    "OPERATIVO",
+    "EN_SERVICIO",
+    "EN_MANTENIMIENTO",
+    "EN_REPARACION",
+    "BAJA",
+]
+
 
 @dataclass
 class Ubicacion:
@@ -39,6 +48,7 @@ class Asset:
     numero_serie: str
     descripcion: str
     estado: str
+    estatus: str
     ubicacion_actual: Ubicacion
     fecha_ingreso: str
     sku: str = ""
@@ -48,10 +58,13 @@ class Asset:
     etiqueta_impresa: bool = False
 
     catalogo_estados: ClassVar[list[str]] = ESTADOS_DEFECTO
+    catalogo_estatus: ClassVar[list[str]] = ESTATUS_DEFECTO
 
     def validar(self) -> None:
         if self.estado not in self.catalogo_estados:
             raise ValueError("Estado inválido para el equipo.")
+        if self.catalogo_estatus and self.estatus not in self.catalogo_estatus:
+            raise ValueError("Estatus inválido para el equipo.")
         if not self.categoria:
             raise ValueError("La categoría es obligatoria.")
         if not self.marca:
@@ -74,6 +87,7 @@ class Asset:
             "fecha_ingreso": self.fecha_ingreso,
             "descripcion": self.descripcion,
             "estado": self.estado,
+            "estatus": self.estatus,
             "ubicacion_actual": self.ubicacion_actual.to_dict(),
             "fecha_ultimo_mto": self.fecha_ultimo_mto,
             "fecha_prox_mto": self.fecha_prox_mto,
@@ -92,6 +106,7 @@ class Asset:
             fecha_ingreso=data.get("fecha_ingreso", date.today().isoformat()),
             descripcion=data.get("descripcion", ""),
             estado=data.get("estado", ESTADOS_DEFECTO[0]),
+            estatus=data.get("estatus", data.get("estado", ESTATUS_DEFECTO[0])),
             ubicacion_actual=Ubicacion.from_dict(data.get("ubicacion_actual", {})),
             fecha_ultimo_mto=data.get("fecha_ultimo_mto"),
             fecha_prox_mto=data.get("fecha_prox_mto"),

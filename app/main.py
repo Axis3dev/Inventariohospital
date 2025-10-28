@@ -4,7 +4,7 @@ from __future__ import annotations
 import flet as ft
 
 from .theme import page_config
-from .ui import dashboard, entregas, inventario, mantenimientos, reportes
+from .ui import config, dashboard, entregas, inventario, mantenimientos, reportes
 from .ui.import_txt import importar_txt_view
 from .ui.quick_new import quick_new_equipo
 from .ui.shell import make_shell
@@ -14,6 +14,7 @@ def main(page: ft.Page) -> None:
     """Inicializa la aplicación en modo fullscreen con la shell personalizada."""
 
     page_config(page)
+    page.title = "Inventario de Sistemas Cemsi"
 
     routes = [
         ("Dashboard", dashboard.build),
@@ -23,6 +24,7 @@ def main(page: ft.Page) -> None:
         ("Entregas", entregas.build),
         ("Mantenimientos", mantenimientos.build),
         ("Reportes", reportes.build),
+        ("Configuraciones", config.build),
     ]
 
     initial_index = 0

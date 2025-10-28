@@ -22,20 +22,15 @@ OBLIGATORIOS = [
 def quick_new_equipo(page: ft.Page) -> ft.Control:
     """Construye la vista para registrar rápidamente un equipo."""
 
-    categorias_data = storage.read_json(storage.DATA_DIR / "categorias.json")
+    categorias_data = storage.read_json_generic("categorias.json", [])
     categoria_nombres = [item.get("categoria", "") for item in categorias_data or [] if item.get("categoria")]
     if not categoria_nombres:
         categoria_nombres = ["CPU", "MONITOR", "TELEFONO", "CAMARA", "NBK"]
 
-    areas = storage.read_json(storage.DATA_DIR / "areas.json") or [
-        "Urgencias",
-        "Hospitalización",
-        "Quirófano",
-        "Administración",
-    ]
-    departamentos = storage.read_json(storage.DATA_DIR / "departamentos.json") or [
-        {"area": "Urgencias", "departamento": "Triage"},
-    ]
+    areas = storage.load_areas()
+    departamentos_catalogo = storage.load_departamentos()
+    estatus_catalogo = storage.load_estatus()
+    estatus_por_defecto = estatus_catalogo[0] if estatus_catalogo else "PENDIENTE_ENTREGA"
 
     dd_categoria = ft.Dropdown(
         label="Categoría",
@@ -50,20 +45,26 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
     dd_area = ft.Dropdown(label="Área", options=[ft.dropdown.Option(area) for area in areas], width=260)
     dd_depto = ft.Dropdown(
         label="Departamento",
-        options=[ft.dropdown.Option(item["departamento"]) for item in departamentos if item.get("departamento")],
+        options=[
+            ft.dropdown.Option(item["departamento"])
+            for item in departamentos_catalogo
+            if item.get("departamento") and (not areas or item.get("area") == areas[0])
+        ],
         width=260,
+    )
+    dd_estatus = ft.Dropdown(
+        label="Estatus",
+        options=[ft.dropdown.Option(valor) for valor in estatus_catalogo],
+        width=260,
+        value=estatus_por_defecto,
     )
 
     mensaje = ft.Text("", color=ft.Colors.RED)
 
     def _actualizar_departamentos(area_sel: str | None) -> None:
-        opciones = [
-            ft.dropdown.Option(item["departamento"])
-            for item in departamentos
-            if item.get("area") == area_sel and item.get("departamento")
-        ]
+        opciones = [ft.dropdown.Option(dep) for dep in storage.departamentos_por_area(area_sel)]
         if not opciones:
-            opciones = [ft.dropdown.Option(item["departamento"]) for item in departamentos if item.get("departamento")]
+            opciones = [ft.dropdown.Option(item["departamento"]) for item in departamentos_catalogo if item.get("departamento")]
         dd_depto.options = opciones
         if opciones:
             primera = opciones[0]
@@ -71,11 +72,11 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
         page.update()
 
     def _limpiar_campos() -> None:
-        for control in (dd_categoria, in_marca, in_modelo, in_serie, in_descripcion, dd_area, dd_depto):
+        for control in (dd_categoria, in_marca, in_modelo, in_serie, in_descripcion, dd_area, dd_depto, dd_estatus):
             if isinstance(control, ft.TextField):
                 control.value = ""
             else:
-                control.value = None
+                control.value = estatus_por_defecto if control is dd_estatus else None
         mensaje.value = ""
         page.update()
 
@@ -96,6 +97,7 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
             "descripcion": in_descripcion.value,
             "area": dd_area.value,
             "departamento": dd_depto.value,
+            "estatus": dd_estatus.value,
         }
         faltantes = [campo for campo in OBLIGATORIOS if not datos.get(campo)]
         if faltantes:
@@ -116,6 +118,7 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
             numero_serie=datos["numero_serie"],
             descripcion=datos["descripcion"],
             estado="OPERATIVO",
+            estatus=datos["estatus"] or estatus_por_defecto,
             ubicacion_actual=Ubicacion(area=datos["area"], departamento=datos["departamento"]),
             fecha_ingreso=datetime.utcnow().date().isoformat(),
             sku=_generar_sku(datos["categoria"]),
@@ -135,6 +138,10 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
         page.snack_bar = ft.SnackBar(ft.Text(f"Equipo {nuevo_asset.sku} agregado correctamente"), open=True)
         _limpiar_campos()
 
+    if areas:
+        dd_area.value = areas[0]
+        _actualizar_departamentos(dd_area.value)
+
     dd_area.on_change = lambda e: _actualizar_departamentos(e.control.value)
 
     formulario = ft.Column(
@@ -142,6 +149,7 @@ def quick_new_equipo(page: ft.Page) -> ft.Control:
         controls=[
             ft.Row(spacing=12, controls=[dd_categoria, in_marca, in_modelo]),
             ft.Row(spacing=12, controls=[in_serie, dd_area, dd_depto]),
+            ft.Row(spacing=12, controls=[dd_estatus]),
             in_descripcion,
             ft.Row(
                 spacing=12,

@@ -41,6 +41,7 @@ def importar_txt(ruta: Path, area: str, depto: str, usuario: str) -> dict[str, a
                     numero_serie="",
                     descripcion="",
                     estado="OPERATIVO",
+                    estatus="PENDIENTE_ENTREGA",
                     ubicacion_actual=Ubicacion(area=area, departamento=depto),
                     fecha_ingreso=datetime.utcnow().date().isoformat(),
                 )

@@ -92,6 +92,17 @@ def read_json_list(name: str) -> list[dict[str, Any]]:
     return list(read_json(DATA_DIR / name))
 
 
+def read_json_generic(name: str, default: Any) -> Any:
+    """Lee un JSON y, si está vacío, devuelve un valor por defecto."""
+
+    path = DATA_DIR / name
+    data = read_json(path)
+    if data in (None, [], {}):
+        write_json(path, default)
+        return default
+    return data
+
+
 def write_json_list(name: str, data: list[dict[str, Any]]) -> None:
     write_json(DATA_DIR / name, data)
 
@@ -147,15 +158,78 @@ def seed_files() -> None:
             {"categoria": "CAMARA", "prefijo": "CAM"},
             {"categoria": "NBK", "prefijo": "NBK"},
         ],
-        "departamentos.json": [],
+        "departamentos.json": [
+            {"area": "Urgencias", "departamento": "Triage"},
+            {"area": "Urgencias", "departamento": "Shock"},
+            {"area": "Hospitalización", "departamento": "Piso 1"},
+        ],
         "assets.json": [],
         "mantenimientos.json": [],
         "entregas.json": [],
+        "estatus.json": [
+            "PENDIENTE_ENTREGA",
+            "OPERATIVO",
+            "EN_SERVICIO",
+            "EN_MANTENIMIENTO",
+            "EN_REPARACION",
+            "BAJA",
+        ],
     }
     for name, default in defaults.items():
         ensure_file(DATA_DIR / name, default)
     for name in ("ingresos.csv", "egresos.csv", "movimientos.csv"):
         ensure_file(DATA_DIR / name, "")
+
+
+def load_areas() -> list[str]:
+    """Devuelve la lista de áreas disponibles."""
+
+    return list(read_json_generic("areas.json", ["Urgencias", "Hospitalización", "Quirófano", "Administración", "Imagenología"]))
+
+
+def load_departamentos() -> list[dict[str, str]]:
+    """Devuelve los departamentos registrados."""
+
+    return list(
+        read_json_generic(
+            "departamentos.json",
+            [
+                {"area": "Urgencias", "departamento": "Triage"},
+                {"area": "Urgencias", "departamento": "Shock"},
+                {"area": "Hospitalización", "departamento": "Piso 1"},
+            ],
+        )
+    )
+
+
+def load_estatus() -> list[str]:
+    """Devuelve el catálogo de estatus de equipos."""
+
+    return list(
+        read_json_generic(
+            "estatus.json",
+            [
+                "PENDIENTE_ENTREGA",
+                "OPERATIVO",
+                "EN_SERVICIO",
+                "EN_MANTENIMIENTO",
+                "EN_REPARACION",
+                "BAJA",
+            ],
+        )
+    )
+
+
+def departamentos_por_area(area: str | None) -> list[str]:
+    """Filtra los departamentos según el área indicada."""
+
+    if not area:
+        return [item.get("departamento", "") for item in load_departamentos() if item.get("departamento")]
+    return [
+        item.get("departamento", "")
+        for item in load_departamentos()
+        if item.get("area") == area and item.get("departamento")
+    ]
 
 
 seed_files()

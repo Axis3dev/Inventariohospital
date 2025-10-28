@@ -3,25 +3,41 @@ from __future__ import annotations
 
 import flet as ft
 
-from ..core import importador
+from ..core import importador, storage
 
 
 def importar_txt_view(page: ft.Page) -> ft.Control:
     """Permite seleccionar un archivo TXT y ejecutar la importación."""
 
     info = ft.Text("", selectable=True)
-    area = ft.TextField(label="Área destino", width=260)
-    depto = ft.TextField(label="Departamento destino", width=260)
+    areas = storage.load_areas()
+
+    dd_area = ft.Dropdown(
+        label="Área destino",
+        width=260,
+        options=[ft.dropdown.Option(area) for area in areas],
+    )
+    dd_depto = ft.Dropdown(label="Departamento destino", width=260)
+
+    def _actualizar_departamentos(area_sel: str | None) -> None:
+        opciones = [ft.dropdown.Option(dep) for dep in storage.departamentos_por_area(area_sel)]
+        dd_depto.options = opciones
+        dd_depto.value = opciones[0].text if opciones else None
+        page.update()
+
+    if areas:
+        dd_area.value = areas[0]
+        _actualizar_departamentos(dd_area.value)
 
     def _pick_result(event: ft.FilePickerResultEvent) -> None:
         if not event.files:
             return
-        if not area.value or not depto.value:
+        if not dd_area.value or not dd_depto.value:
             info.value = "Captura área y departamento antes de importar"
             page.update()
             return
         path = event.files[0].path
-        ok, resumen = importador.importar_sesion(path, area.value, depto.value, usuario="sistemas")
+        ok, resumen = importador.importar_sesion(path, dd_area.value, dd_depto.value, usuario="sistemas")
         info.value = resumen if ok else f"Error: {resumen}"
         page.snack_bar = ft.SnackBar(ft.Text("Importación completada" if ok else "No se pudo importar"), open=True)
         page.update()
@@ -32,7 +48,7 @@ def importar_txt_view(page: ft.Page) -> ft.Control:
         page.update()
 
     def _abrir_picker(_: ft.ControlEvent) -> None:
-        if not area.value or not depto.value:
+        if not dd_area.value or not dd_depto.value:
             info.value = "Captura área y departamento antes de importar"
             page.update()
             return
@@ -41,9 +57,18 @@ def importar_txt_view(page: ft.Page) -> ft.Control:
     controls = ft.Column(
         spacing=12,
         controls=[
-            ft.Row(spacing=12, controls=[area, depto, ft.FilledButton("Seleccionar TXT", icon=ft.Icons.UPLOAD_FILE, on_click=_abrir_picker)]),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    dd_area,
+                    dd_depto,
+                    ft.FilledButton("Seleccionar TXT", icon=ft.Icons.UPLOAD_FILE, on_click=_abrir_picker),
+                ],
+            ),
             info,
         ],
     )
+
+    dd_area.on_change = lambda e: _actualizar_departamentos(e.control.value)
 
     return ft.Container(expand=True, padding=16, content=controls)
