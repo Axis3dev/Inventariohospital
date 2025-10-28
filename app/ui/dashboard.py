@@ -28,14 +28,15 @@ def build(page: ft.Page) -> ft.Control:
     resumen = reglas.resumen_dashboard()
     estatus = Counter(asset.estatus for asset in activos)
 
-    chips = ft.Wrap(
-        spacing=8,
-        run_spacing=8,
+    chips = ft.Row(
         controls=[
             ft.Chip(label=ft.Text(f"{nombre}: {cantidad}"), bgcolor=ft.Colors.GREY_100)
             for nombre, cantidad in estatus.items()
         ]
         or [ft.Text("Sin equipos registrados", color=ft.Colors.GREY)],
+        wrap=True,
+        spacing=8,
+        run_spacing=8,
     )
 
     mantenimientos_texto = (

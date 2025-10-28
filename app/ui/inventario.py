@@ -372,7 +372,7 @@ class EgresoDialog(ft.AlertDialog):
         self.btn_agregar = ft.IconButton(ft.Icons.ADD, tooltip="Agregar", on_click=lambda e: self._agregar())
         self.txt_motivo = ft.TextField(label="Motivo de baja", multiline=True, min_lines=2)
         self.seleccionados: list[str] = []
-        self.chips = ft.Wrap(spacing=6, run_spacing=6)
+        self.chips = ft.Row(wrap=True, spacing=6, run_spacing=6)
 
         self.content = ft.Column(
             tight=True,
