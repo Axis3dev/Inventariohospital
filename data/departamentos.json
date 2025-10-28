@@ -1,0 +1,17 @@
+[
+  {"area": "Urgencias", "departamento": "Triage"},
+  {"area": "Urgencias", "departamento": "Observación"},
+  {"area": "Urgencias", "departamento": "Choque"},
+  {"area": "Hospitalización", "departamento": "Piso 1"},
+  {"area": "Hospitalización", "departamento": "Piso 2"},
+  {"area": "Hospitalización", "departamento": "Pediatría"},
+  {"area": "Quirófano", "departamento": "Quirófano 1"},
+  {"area": "Quirófano", "departamento": "Quirófano 2"},
+  {"area": "Quirófano", "departamento": "Recuperación"},
+  {"area": "Administración", "departamento": "Recursos Humanos"},
+  {"area": "Administración", "departamento": "Finanzas"},
+  {"area": "Administración", "departamento": "Compras"},
+  {"area": "Imagenología", "departamento": "Rayos X"},
+  {"area": "Imagenología", "departamento": "Ultrasonido"},
+  {"area": "Imagenología", "departamento": "Resonancia"}
+]
